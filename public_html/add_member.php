@@ -15,7 +15,7 @@ $info = ldap_get_entries($ldapConn, $s) or die("Vi kunde inte koppla till LDAP. 
 
 $name = $info[0]['givenname'][0] . ' ' . $info[0]['sn'][0];
 
-$klass = '?';
+$klass = '';
 foreach ($info[0]['memberof'] as $group) {
 	$tmp = substr($group, 3, 5);
 
@@ -25,7 +25,7 @@ foreach ($info[0]['memberof'] as $group) {
 	}
 }
 
-if ($klass === '?' || !isset($klassToRoleId[$klass])) {
+if (!isset($klassToRoleId[$klass])) {
 	die('Kunde inte hitta din klass. Be en admin att lägga till dig manuellt.');
 }
 
