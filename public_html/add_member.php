@@ -25,6 +25,10 @@ foreach ($info[0]['memberof'] as $group) {
 	}
 }
 
+if ($klass === '?' || !isset($klassToRoleId[$klass])) {
+	die('Kunde inte hitta din klass. Be en admin att lägga till dig manuellt.');
+}
+
 $body = [
 	'access_token' => $_SESSION['user']['discord_access_token'],
 	'nick' => "$name ($klass)", // TODO HANDLE IF NAME TOO LONG
@@ -33,6 +37,6 @@ $body = [
 
 $url = 'https://discordapp.com/api/guilds/' . DISCORD_GUILD_ID . '/members/'. $_SESSION['user']['discord_id'];
 
-$resp = $client->makeRequest($url, json_encode($body), 'POST', ['Authorization: Bot ' . DISCORD_BOT_TOKEN, 'Content-Type: application/json']);
+$resp = $client->makeRequest($url, 'PUT', json_encode($body), ['Authorization: Bot ' . DISCORD_BOT_TOKEN, 'Content-Type: application/json']);
 
 header('Location: https://discord.com/channels/' . DISCORD_GUILD_ID);

@@ -16,14 +16,14 @@ $body = [
 ];
 
 $resp = $client->makeRequest('https://discordapp.com/api/oauth2/token', 'POST', $body);
-if ($resp['responseStatus'] !== 200) {
+if (!isset(json_decode($resp['body'])->access_token)) {
 	die('Något gick fel');
 }
 
 $accessToken = json_decode($resp['body'])->access_token;
 
 $userResp = $client->makeRequest('https://discordapp.com/api/users/@me', 'GET', '', ["Authorization: Bearer $accessToken"]);
-if ($userResp['responseStatus'] !== 200) {
+if (!isset(json_decode($userResp['body'])->id)) {
 	die('Något gick fel');
 }
 

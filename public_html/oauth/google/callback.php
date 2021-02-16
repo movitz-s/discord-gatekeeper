@@ -15,12 +15,13 @@ $body = [
 	"client_secret" => GOOGLE_CLIENT_SECRET
 ];
 
-$resp = $client->makeRequest('https://oauth2.googleapis.com/token', $body, 'POST');
-if ($resp['status'] !== 200) {
+$resp = $client->makeRequest('https://oauth2.googleapis.com/token', 'POST', http_build_query($body));
+
+if (!isset(json_decode($resp['body'])->id_token)) {
 	die('Något gick fel');
 }
 
-$idToken = json_decode(base64_decode(explode(".", $resp['body']->id_token)[1]));
+$idToken = json_decode(base64_decode(explode(".", json_decode($resp['body'])->id_token)[1]));
 
 $user = $db->run('SELECT * FROM discord_inviter_users WHERE google_id = ?;', [$idToken->sub])->fetch();
 

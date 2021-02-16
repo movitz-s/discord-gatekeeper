@@ -1,6 +1,7 @@
 <?php
 
 // stolen from https://github.com/ekillaby/simple-http-client
+// jag ångrar detta nu, denna klient suger och lita inte på den
 
 /**
  * Class for simplifying HTTP requests by wrapping cURL workflow.
