@@ -8,18 +8,19 @@ if (isset($_SESSION['user']['google_id'])) {
 }
 
 $body = [
-	"grant_type" => "authorization_code",
-	"code" => $_GET["code"],
-	"redirect_uri" => "https://" . $_SERVER['HTTP_HOST'] . '/oauth/google/callback.php',
-	"client_id" => GOOGLE_CLIENT_ID,
+	'grant_type' => 'authorization_code',
+	'code' => $_GET["code"],
+	'redirect_uri' => 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/google/callback.php',
+	'client_id' => GOOGLE_CLIENT_ID,
 	"client_secret" => GOOGLE_CLIENT_SECRET
 ];
 
-$url = "https://oauth2.googleapis.com/token";
+$resp = $client->makeRequest('https://oauth2.googleapis.com/token', $body, 'POST');
+if ($resp['status'] !== 200) {
+	die('Något gick fel');
+}
 
-$resp = json_decode(httpPost($url, $body));
-$idToken = json_decode(base64_decode(explode(".", $resp->id_token)[1]));
-
+$idToken = json_decode(base64_decode(explode(".", $resp['body']->id_token)[1]));
 
 $user = $db->run('SELECT * FROM discord_inviter_users WHERE google_id = ?;', [$idToken->sub])->fetch();
 

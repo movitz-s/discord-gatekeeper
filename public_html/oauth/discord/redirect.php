@@ -11,9 +11,7 @@ $query = http_build_query([
 	'response_type' => 'code',
 	'client_id' => DISCORD_CLIENT_ID,
 	'scope' => join(' ', ['identify', 'guilds.join']),
-	'redirect_uri' => "https://" . $_SERVER['HTTP_HOST'] . '/oauth/discord/callback.php'
+	'redirect_uri' => 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/discord/callback.php'
 ]);
 
-$url = 'https://discordapp.com/api/oauth2/authorize?' . $query;
-
-header('Location: ' . $url);
+header("Location: https://discordapp.com/api/oauth2/authorize?$query");

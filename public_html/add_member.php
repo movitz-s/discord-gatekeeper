@@ -6,7 +6,6 @@ if (!isset($_SESSION['user']['discord_access_token'])) {
 	return;
 }
 
-
 $ldapConn = ldap_connect("ldaps://ad.ssis.nu") or die("Vi kunde inte koppla till LDAP. (1)");
 
 $bind = ldap_bind($ldapConn, LDAP_USER . "@ad.ssis.nu", LDAP_PASSWORD) or die("Vi kunde inte koppla till LDAP. (2)");
@@ -32,8 +31,8 @@ $body = [
 	'roles' => [$klassToRoleId[$klass]]
 ];
 
-$url = "https://discordapp.com/api/guilds/" . DISCORD_GUILD_ID . "/members/". $_SESSION['user']['discord_id'];
+$url = 'https://discordapp.com/api/guilds/' . DISCORD_GUILD_ID . '/members/'. $_SESSION['user']['discord_id'];
 
-$resp = httpPut($url, json_encode($body), ['Authorization: Bot ' . DISCORD_BOT_TOKEN, 'Content-Type: application/json', 'Content-Length: ' . strlen(json_encode($body))]);
+$resp = $client->makeRequest($url, json_encode($body), 'POST', ['Authorization: Bot ' . DISCORD_BOT_TOKEN, 'Content-Type: application/json']);
 
 header('Location: https://discord.com/channels/' . DISCORD_GUILD_ID);

@@ -8,25 +8,26 @@ if (!isset($_SESSION['user']['google_id'])) {
 }
 
 $body = [
-	"grant_type" => "authorization_code",
-	"code" => $_GET["code"],
-	"redirect_uri" => "https://" . $_SERVER['HTTP_HOST'] . '/oauth/discord/callback.php',
-	"client_id" => DISCORD_CLIENT_ID,
-	"client_secret" => DISCORD_CLIENT_SECRET
+	'grant_type' => 'authorization_code',
+	'code' => $_GET["code"],
+	'redirect_uri' => 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/discord/callback.php',
+	'client_id' => DISCORD_CLIENT_ID,
+	'client_secret' => DISCORD_CLIENT_SECRET
 ];
 
-$url = "https://discordapp.com/api/oauth2/token";
-
-$resp = httpPost($url, $body);
-$accessToken = json_decode($resp)->access_token;
-
-$userResp = httpGet('https://discordapp.com/api/users/@me', ['Authorization: Bearer ' . $accessToken]);
-
-$discordId = json_decode($userResp)->id;
-
-if (!isset($discordId)) {
+$resp = $client->makeRequest('https://discordapp.com/api/oauth2/token', 'POST', $body);
+if ($resp['responseStatus'] !== 200) {
 	die('Något gick fel');
 }
+
+$accessToken = json_decode($resp['body'])->access_token;
+
+$userResp = $client->makeRequest('https://discordapp.com/api/users/@me', 'GET', '', ["Authorization: Bearer $accessToken"]);
+if ($userResp['responseStatus'] !== 200) {
+	die('Något gick fel');
+}
+
+$discordId = json_decode($userResp['body'])->id;
 
 $user = $db->run('SELECT * FROM discord_inviter_users WHERE discord_id != ? AND discord_id != "" AND google_id = ?;', [$idToken->sub, $_SESSION['user']['google_id']])->fetch();
 
