@@ -29,9 +29,12 @@ if (!isset($klassToRoleId[$klass])) {
 	die('Kunde inte hitta din klass. Be en admin att lägga till dig manuellt.');
 }
 
+// discord nicks are limited to 32 chars
+$nick = substr($name, 0, 32 - strlen($klass) - 3) . " ($klass)";
+
 $body = [
 	'access_token' => $_SESSION['user']['discord_access_token'],
-	'nick' => "$name ($klass)", // TODO HANDLE IF NAME TOO LONG
+	'nick' => $nick,
 	'roles' => [$klassToRoleId[$klass]]
 ];
 
